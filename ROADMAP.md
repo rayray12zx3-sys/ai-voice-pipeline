@@ -18,9 +18,9 @@
 - [x] GitHub CI workflow for Python 3.11–3.14
 - [x] Public-repository security guidance
 - [x] Current Gemini provider-evidence note
-- [ ] Hosted CI observed green on the hardening PR
+- [x] Hosted CI observed green on hardening PR #1 — run 36600912339; Python 3.11/3.12/3.13/3.14 all passed compile, unit tests and diff check
 
-R0 is complete only when the final checkbox has concrete GitHub evidence. A workflow file existing in the repository is not itself CI success.
+R0 offline/foundation scope is complete. This does **not** imply live Gemini API, pronunciation quality, Premiere import, or downstream lip-sync validation.
 
 ## R1 — Real Gemini smoke tests
 

@@ -12,6 +12,14 @@ class ContractTests(unittest.TestCase):
         )
         self.assertFalse(req.multi_speaker)
 
+    def test_single_speaker_allows_custom_voice_id(self):
+        req = VoiceRequest(
+            model="gemini-3.8-flash-tts",
+            turns=(DialogueTurn("Hello."),),
+            voices={"Narrator": "voice_custom_example"},
+        )
+        self.assertFalse(req.multi_speaker)
+
     def test_two_speaker_requires_matching_bindings(self):
         with self.assertRaises(ValueError):
             VoiceRequest(
@@ -33,6 +41,17 @@ class ContractTests(unittest.TestCase):
                     DialogueTurn("3", speaker="C"),
                 ),
                 voices={"A": "Kore", "B": "Puck", "C": "Charon"},
+            )
+
+    def test_multi_speaker_rejects_custom_voice_ids(self):
+        with self.assertRaises(ValueError):
+            VoiceRequest(
+                model="gemini-3.8-flash-tts",
+                turns=(
+                    DialogueTurn("Hi", speaker="A"),
+                    DialogueTurn("Hello", speaker="B"),
+                ),
+                voices={"A": "Kore", "B": "voice_custom_example"},
             )
 
     def test_r0_rejects_non_wav_output(self):

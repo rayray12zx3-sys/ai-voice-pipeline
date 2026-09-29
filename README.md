@@ -6,9 +6,9 @@ Provider-neutral AI voice/TTS pipeline, starting with Google Gemini TTS.
 
 ## Status
 
-**Phase:** R0 hardening / safe dry-run
+**Phase:** R0 offline foundation complete / R1 live validation pending
 
-This repository is intentionally separate from `ai-video-template-v2`. The goal is to validate a small, auditable voice-generation workflow before integrating it into the larger video pipeline.
+This repository is intentionally separate from `ai-video-template-v2`. R0 now provides a CI-validated, network-safe foundation; the next gate is deliberate live Gemini validation before any integration into the larger video pipeline.
 
 ## Current scope
 
@@ -25,6 +25,14 @@ This repository is intentionally separate from `ai-video-template-v2`. The goal 
 - SHA-256 receipt generation and verification
 - Python 3.11–3.14 CI matrix
 - Offline unit tests
+
+## Next gated work
+
+- [R1 live Gemini validation](https://github.com/rayray12zx3-sys/ai-voice-pipeline/issues/2)
+- [R2 semantic/editorial Audio QC](https://github.com/rayray12zx3-sys/ai-voice-pipeline/issues/3)
+- [R3 provider-neutral voice identity](https://github.com/rayray12zx3-sys/ai-voice-pipeline/issues/4)
+- [R4 ai-video-template-v2 integration](https://github.com/rayray12zx3-sys/ai-voice-pipeline/issues/5)
+- [License decision](https://github.com/rayray12zx3-sys/ai-voice-pipeline/issues/6)
 
 ## Not in scope yet
 

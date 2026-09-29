@@ -1,12 +1,14 @@
 # AI Voice Pipeline
 
+[![CI](https://github.com/rayray12zx3-sys/ai-voice-pipeline/actions/workflows/ci.yml/badge.svg)](https://github.com/rayray12zx3-sys/ai-voice-pipeline/actions/workflows/ci.yml)
+
 Provider-neutral AI voice/TTS pipeline, starting with Google Gemini TTS.
 
 ## Status
 
-**Phase:** foundation / safe dry-run
+**Phase:** R0 hardening / safe dry-run
 
-This repository is intentionally separate from `ai-video-template-v2`. The first goal is to validate a small, auditable voice-generation workflow before integrating it into the larger video pipeline.
+This repository is intentionally separate from `ai-video-template-v2`. The goal is to validate a small, auditable voice-generation workflow before integrating it into the larger video pipeline.
 
 ## Current scope
 
@@ -15,10 +17,13 @@ This repository is intentionally separate from `ai-video-template-v2`. The first
 - Single-speaker generation
 - Two-speaker conversational generation
 - Provider-neutral request contract
+- JSON Schema for request configs
 - Dry-run payload generation by default
-- Optional explicit API execution
-- WAV materialization
-- SHA-256 receipt generation
+- Explicit opt-in API execution
+- Atomic WAV materialization
+- Offline WAV technical QC
+- SHA-256 receipt generation and verification
+- Python 3.11–3.14 CI matrix
 - Offline unit tests
 
 ## Not in scope yet
@@ -26,17 +31,18 @@ This repository is intentionally separate from `ai-video-template-v2`. The first
 - Voice replication / voice cloning
 - Lip sync
 - Premiere / After Effects automation
-- Automatic Audio QC
-- Hosted CI
+- Transcript/pronunciation Audio QC
 - Integration into `ai-video-template-v2`
 
 ## Safety defaults
 
 - No API call occurs unless `--execute` is explicitly supplied.
 - `GEMINI_API_KEY` is read only from the environment.
-- Secrets must never be committed.
-- Tests are offline and do not contact Google.
-- Generated media and receipts are ignored by Git by default.
+- Missing API credentials fail before a provider request.
+- Core tests are offline and do not contact Google.
+- Generated audio must pass technical WAV QC before it is materialized as the requested output.
+- Receipts contain hashes and technical metadata, not API keys or transcript text.
+- Generated media, receipts and environment files are ignored by Git.
 
 ## Requirements
 
@@ -49,7 +55,7 @@ This repository is intentionally separate from `ai-video-template-v2`. The first
 Offline development:
 
 ```powershell
-python -m pip install -e .
+python -m pip install -e . --no-deps
 ```
 
 Gemini execution support:
@@ -58,41 +64,65 @@ Gemini execution support:
 python -m pip install -e ".[gemini]"
 ```
 
-Set the API key only when you are ready to execute:
-
-```powershell
-$env:GEMINI_API_KEY = "..."
-```
+The Gemini optional dependency requires `google-genai>=2.25.0,<3`, matching the current SDK baseline needed by the Gemini 3.8 voice ecosystem.
 
 ## Dry-run first
 
-```powershell
-ai-voice examples/single-speaker.json
-```
-
-This prints the request that would be sent but does not call Gemini.
-
-Two-speaker example:
+Single speaker:
 
 ```powershell
-ai-voice examples/dialogue.json
+ai-voice render examples/single-speaker.json
 ```
+
+Two speakers:
+
+```powershell
+ai-voice render examples/dialogue.json
+```
+
+Dry-run prints the provider request and makes no network call.
 
 ## Execute deliberately
 
 ```powershell
-ai-voice examples/single-speaker.json --execute --out output/narration.wav
+$env:GEMINI_API_KEY = "..."
+ai-voice render examples/single-speaker.json --execute --out output/narration.wav
 ```
 
-The command writes:
+A successful execution writes:
 
 - the WAV file
-- a JSON receipt with provider/model/request hash/output hash
+- `<wav>.receipt.json` with provider/model/request/output hashes
+- technical QC metadata
 
-## Test
+R0 expects Gemini 3.8 unary default WAV output: **24 kHz, mono, 16-bit PCM**.
+
+## QC an existing WAV
 
 ```powershell
+ai-voice qc output/narration.wav
+```
+
+## Verify materialization
+
+```powershell
+ai-voice verify output/narration.wav.receipt.json output/narration.wav
+```
+
+This detects replaced or corrupted output.
+
+## Offline validation
+
+```powershell
+python -m compileall -q src tests
 python -m unittest discover -s tests -v
+git diff --check
+```
+
+Windows helper:
+
+```powershell
+.\scripts\validate.ps1
 ```
 
 ## Architecture
@@ -102,35 +132,53 @@ JSON config
    ↓
 VoiceRequest
    ↓
-Provider-neutral validation
+provider-neutral validation
+   ↓
+provider registry
    ↓
 Gemini adapter
    ├─ dry-run → request payload only
-   └─ execute → Gemini API
+   └─ execute → Gemini Interactions API
                  ↓
-               WAV
+            in-memory WAV
                  ↓
-             receipt
+          technical Audio QC
+                 ↓
+        atomic materialization
+                 ↓
+          SHA-256 receipt
 ```
 
-See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/INTEGRATION-NOTES.md](docs/INTEGRATION-NOTES.md).
+See:
+
+- [Architecture](docs/ARCHITECTURE.md)
+- [Operations](docs/OPERATIONS.md)
+- [Provider evidence](docs/PROVIDER-EVIDENCE.md)
+- [Future integration boundary](docs/INTEGRATION-NOTES.md)
+- [Roadmap](ROADMAP.md)
 
 ## Future integration
 
-The intended integration boundary with `ai-video-template-v2` is:
+The intended `ai-video-template-v2` boundary is:
 
 ```text
 AUDIO_GENERATE ticket
+        ↓
+voice provider routing
         ↓
 ai-voice-pipeline
         ↓
 WAV + receipt
         ↓
-audio asset / QC
+Audio QC / asset materialization
+        ↓
+video / lip-sync / post workflow
 ```
 
-The canonical video project should describe voice intent, not hard-code a Gemini-specific voice ID.
+Canonical video-project state should describe voice intent and logical voice aliases, not hard-code a Gemini-specific voice ID.
 
-## License
+## Repository visibility and license
 
-No open-source license has been selected yet.
+This repository is public. Do not commit company/private scripts, real credentials, or private voice reference/consent audio.
+
+No open-source license has been selected yet. Until one is selected, normal copyright applies.

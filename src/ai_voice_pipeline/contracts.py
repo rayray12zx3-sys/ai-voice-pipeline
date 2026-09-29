@@ -13,6 +13,41 @@ SUPPORTED_MODELS = frozenset({
 SUPPORTED_MIME_TYPES = frozenset({"audio/wav"})
 MAX_SPEAKERS = 2
 
+# Conservative R0 allowlist for single-request conversational TTS.
+# Google documents multi-speaker generation as supporting prebuilt voices only.
+PREBUILT_STUDIO_VOICES = frozenset({
+    "Zephyr",
+    "Puck",
+    "Charon",
+    "Kore",
+    "Fenrir",
+    "Leda",
+    "Orus",
+    "Aoede",
+    "Callirrhoe",
+    "Autonoe",
+    "Enceladus",
+    "Iapetus",
+    "Umbriel",
+    "Algieba",
+    "Despina",
+    "Erinome",
+    "Algenib",
+    "Rasalgethi",
+    "Laomedeia",
+    "Achernar",
+    "Alnilam",
+    "Schedar",
+    "Gacrux",
+    "Pulcherrima",
+    "Achird",
+    "Zubenelgenubi",
+    "Vindemiatrix",
+    "Sadachbia",
+    "Sadaltager",
+    "Sulafat",
+})
+
 
 def _nonempty(value: str, field: str) -> str:
     if not isinstance(value, str) or not value.strip():
@@ -68,6 +103,15 @@ class VoiceRequest:
                 raise ValueError("every turn must specify speaker in multi-speaker mode")
             if speakers != set(self.voices):
                 raise ValueError("speaker names must exactly match voice bindings")
+            unsupported = sorted(
+                voice for voice in self.voices.values()
+                if voice not in PREBUILT_STUDIO_VOICES
+            )
+            if unsupported:
+                raise ValueError(
+                    "R0 multi-speaker mode supports curated prebuilt Studio voices only: "
+                    + ", ".join(unsupported)
+                )
         elif len(self.voices) != 1:
             raise ValueError("single-speaker mode requires exactly one voice binding")
 

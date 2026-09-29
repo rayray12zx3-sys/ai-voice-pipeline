@@ -104,7 +104,7 @@ The receipt deliberately excludes:
 
 ## Deliberate limitations
 
-- Single-request conversational mode is capped at two speakers.
+- Single-request conversational mode is capped at two speakers and R0 allows only the 30 curated Studio prebuilt voices in that mode.
 - Voice replication is not implemented.
 - Streaming output is not implemented.
 - R0 supports WAV only.

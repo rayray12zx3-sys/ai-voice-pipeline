@@ -1,51 +1,74 @@
 # Roadmap
 
-## R0 — Foundation
+## R0 — Foundation and hardening
 
 - [x] Independent repository
 - [x] Provider-neutral request contract
 - [x] Gemini payload adapter
-- [x] Dry-run CLI
+- [x] Provider registry boundary
+- [x] JSON request schema
+- [x] Dry-run CLI by default
 - [x] Explicit execution gate
-- [x] Local output receipt
-- [x] Offline unit tests
+- [x] API-key preflight before network use
+- [x] Atomic WAV materialization
+- [x] SHA-256 output receipt
+- [x] Receipt/output verification
+- [x] Offline WAV technical QC
+- [x] Offline unit-test suite
+- [x] GitHub CI workflow for Python 3.11–3.14
+- [x] Public-repository security guidance
+- [x] Current Gemini provider-evidence note
+- [ ] Hosted CI observed green on the hardening PR
+
+R0 is complete only when the final checkbox has concrete GitHub evidence. A workflow file existing in the repository is not itself CI success.
 
 ## R1 — Real Gemini smoke tests
 
-Do only after deliberate approval to spend/use API quota.
+Requires deliberate approval to use API quota and a real `GEMINI_API_KEY`.
 
 - [ ] Single-speaker Traditional Chinese narration
 - [ ] Single-speaker English dialogue
 - [ ] Two-speaker conversational dialogue
-- [ ] Verify WAV compatibility with Premiere Pro
-- [ ] Record model/voice/API behavior notes
+- [ ] Confirm returned WAV is 24 kHz / mono / 16-bit PCM
+- [ ] Verify WAV imports correctly in Premiere Pro
+- [ ] Record exact SDK/model/voice behavior
+- [ ] Confirm receipt contains no secret or transcript text
 
 ## R2 — Audio QC
 
-- [ ] Technical WAV validation
-- [ ] Duration / silence / clipping checks
+Offline technical QC is already in R0. R2 adds semantic/creative checks.
+
+- [ ] Duration / leading/trailing silence policy
 - [ ] Transcript-vs-source verification
 - [ ] Language/pronunciation checks
+- [ ] Loudness policy for downstream editing
 - [ ] Human creative review fields
+- [ ] Retry/stop-loss policy
 
 ## R3 — Voice identity
 
 - [ ] Provider-neutral voice aliases
-- [ ] Voice library discovery
+- [ ] Extended Voice Library discovery
 - [ ] Voice Design experiment
+- [ ] Voice selection metadata/provenance
 - [ ] Consent and provenance policy before any voice replication work
 
 ## R4 — ai-video-template-v2 integration
+
+Do not start until R1 evidence exists.
 
 - [ ] Map to `AUDIO_GENERATE`
 - [ ] Capability snapshot contract
 - [ ] Execution receipt mapping
 - [ ] Materialized audio asset mapping
+- [ ] Audio QC gate mapping
 - [ ] Lip-sync routing as a separate downstream operation
+- [ ] Keep provider voice IDs outside canonical character identity
 
 ## Deferred
 
 - Voice replication
 - Automatic lip sync
 - Premiere automation
-- Hosted CI
+- Streaming TTS
+- Non-WAV output formats

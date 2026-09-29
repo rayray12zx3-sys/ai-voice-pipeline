@@ -12,6 +12,14 @@ class ContractTests(unittest.TestCase):
         )
         self.assertFalse(req.multi_speaker)
 
+    def test_single_speaker_allows_custom_voice_id(self):
+        req = VoiceRequest(
+            model="gemini-3.8-flash-tts",
+            turns=(DialogueTurn("Hello."),),
+            voices={"Narrator": "voice_custom_example"},
+        )
+        self.assertFalse(req.multi_speaker)
+
     def test_two_speaker_requires_matching_bindings(self):
         with self.assertRaises(ValueError):
             VoiceRequest(
@@ -34,6 +42,36 @@ class ContractTests(unittest.TestCase):
                 ),
                 voices={"A": "Kore", "B": "Puck", "C": "Charon"},
             )
+
+    def test_multi_speaker_rejects_custom_voice_ids(self):
+        with self.assertRaises(ValueError):
+            VoiceRequest(
+                model="gemini-3.8-flash-tts",
+                turns=(
+                    DialogueTurn("Hi", speaker="A"),
+                    DialogueTurn("Hello", speaker="B"),
+                ),
+                voices={"A": "Kore", "B": "voice_custom_example"},
+            )
+
+    def test_r0_rejects_non_wav_output(self):
+        with self.assertRaises(ValueError):
+            VoiceRequest(
+                model="gemini-3.8-flash-tts",
+                turns=(DialogueTurn("Hello"),),
+                voices={"Narrator": "Kore"},
+                output_mime_type="audio/l16",
+            )
+
+    def test_safe_summary_excludes_transcript(self):
+        req = VoiceRequest(
+            model="gemini-3.8-flash-lite-tts",
+            turns=(DialogueTurn("private transcript"),),
+            voices={"Narrator": "Kore"},
+        )
+        summary = req.safe_summary()
+        self.assertNotIn("private transcript", repr(summary))
+        self.assertEqual(summary["turn_count"], 1)
 
 
 if __name__ == "__main__":

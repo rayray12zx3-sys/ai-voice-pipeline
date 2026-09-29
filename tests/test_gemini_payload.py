@@ -1,3 +1,4 @@
+import base64
 import unittest
 
 from ai_voice_pipeline.contracts import DialogueTurn, VoiceRequest
@@ -22,6 +23,15 @@ class GeminiPayloadTests(unittest.TestCase):
             "friendly",
         )
 
+    def test_single_speaker_without_style_has_no_empty_annotation(self):
+        req = VoiceRequest(
+            model="gemini-3.8-flash-tts",
+            turns=(DialogueTurn("Hello"),),
+            voices={"Narrator": "Kore"},
+        )
+        block = GeminiTTSProvider.build_payload(req)["input"][0]["content"][0]
+        self.assertNotIn("annotations", block)
+
     def test_multi_speaker_payload(self):
         req = VoiceRequest(
             model="gemini-3.8-flash-lite-tts",
@@ -39,6 +49,15 @@ class GeminiPayloadTests(unittest.TestCase):
             payload["input"][0]["content"][1]["annotations"][0]["speaker"],
             "B",
         )
+
+    def test_decode_output_audio(self):
+        raw = b"RIFFfake"
+        encoded = base64.b64encode(raw).decode("ascii")
+        self.assertEqual(GeminiTTSProvider.decode_output_audio(encoded), raw)
+
+    def test_decode_rejects_invalid_base64(self):
+        with self.assertRaises(RuntimeError):
+            GeminiTTSProvider.decode_output_audio("%%%not-base64%%%")
 
 
 if __name__ == "__main__":

@@ -4,15 +4,24 @@
   "title": "AI Voice Pipeline request",
   "type": "object",
   "additionalProperties": false,
-  "required": ["model", "voices", "turns"],
+  "required": [
+    "model",
+    "voices",
+    "turns"
+  ],
   "properties": {
     "model": {
       "type": "string",
-      "enum": ["gemini-3.8-flash-tts", "gemini-3.8-flash-lite-tts"]
+      "enum": [
+        "gemini-3.8-flash-tts",
+        "gemini-3.8-flash-lite-tts"
+      ]
     },
     "output_mime_type": {
       "type": "string",
-      "enum": ["audio/wav"],
+      "enum": [
+        "audio/wav"
+      ],
       "default": "audio/wav"
     },
     "voices": {
@@ -30,13 +39,79 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["text"],
+        "required": [
+          "text"
+        ],
         "properties": {
-          "text": {"type": "string", "minLength": 1},
-          "speaker": {"type": "string", "minLength": 1},
-          "style": {"type": "string", "minLength": 1}
+          "text": {
+            "type": "string",
+            "minLength": 1
+          },
+          "speaker": {
+            "type": "string",
+            "minLength": 1
+          },
+          "style": {
+            "type": "string",
+            "minLength": 1
+          }
         }
       }
     }
-  }
+  },
+  "allOf": [
+    {
+      "if": {
+        "properties": {
+          "voices": {
+            "minProperties": 2
+          }
+        },
+        "required": [
+          "voices"
+        ]
+      },
+      "then": {
+        "properties": {
+          "voices": {
+            "additionalProperties": {
+              "type": "string",
+              "enum": [
+                "Zephyr",
+                "Puck",
+                "Charon",
+                "Kore",
+                "Fenrir",
+                "Leda",
+                "Orus",
+                "Aoede",
+                "Callirrhoe",
+                "Autonoe",
+                "Enceladus",
+                "Iapetus",
+                "Umbriel",
+                "Algieba",
+                "Despina",
+                "Erinome",
+                "Algenib",
+                "Rasalgethi",
+                "Laomedeia",
+                "Achernar",
+                "Alnilam",
+                "Schedar",
+                "Gacrux",
+                "Pulcherrima",
+                "Achird",
+                "Zubenelgenubi",
+                "Vindemiatrix",
+                "Sadachbia",
+                "Sadaltager",
+                "Sulafat"
+              ]
+            }
+          }
+        }
+      }
+    }
+  ]
 }

@@ -1,0 +1,13 @@
+{
+  "model": "gemini-3.8-flash-tts",
+  "voices": {
+    "Narrator": "Kore"
+  },
+  "turns": [
+    {
+      "text": "在荒蕪的沙漠裡，他仍然繼續向前。",
+      "style": "calm, cinematic, restrained narration"
+    }
+  ],
+  "output_mime_type": "audio/wav"
+}

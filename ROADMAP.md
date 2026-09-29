@@ -18,7 +18,7 @@
 - [x] GitHub CI workflow for Python 3.11–3.14
 - [x] Public-repository security guidance
 - [x] Current Gemini provider-evidence note
-- [x] Hosted CI observed green on hardening PR #1 — run 36600912339; Python 3.11/3.12/3.13/3.14 all passed compile, unit tests and diff check
+- [x] Hosted CI observed green on hardening PR #1; final merge requires the current PR head checks to remain green on Python 3.11/3.12/3.13/3.14
 
 R0 offline/foundation scope is complete. This does **not** imply live Gemini API, pronunciation quality, Premiere import, or downstream lip-sync validation.
 

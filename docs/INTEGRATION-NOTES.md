@@ -1,10 +1,10 @@
-# Integration notes for ai-video-template-v2
+# Integration notes for ai-video-template
 
 This repository must remain independently testable before integration.
 
 ## Intended boundary
 
-`ai-video-template-v2` already models an `AUDIO_GENERATE` execution operation. Future integration should treat this repository as an audio provider/execution layer rather than embedding Gemini-specific fields into canonical shot semantics.
+`ai-video-template` already models an `AUDIO_GENERATE` execution operation. Future integration should treat this repository as an audio provider/execution layer rather than embedding Gemini-specific fields into canonical shot semantics.
 
 Target flow:
 
@@ -47,7 +47,7 @@ video/lip-sync/post workflow
 
 ## Receipt mapping
 
-The current local receipt is not automatically a canonical `ai-video-template-v2` receipt. Integration must explicitly map and validate fields rather than copying the JSON wholesale.
+The current local receipt is not automatically a canonical `ai-video-template` receipt. Integration must explicitly map and validate fields rather than copying the JSON wholesale.
 
 At minimum, the integration layer should bind:
 
@@ -71,7 +71,7 @@ Lip sync is a downstream media operation, not part of TTS generation. Keep it as
 
 ## Integration gate
 
-Do not merge this project into `ai-video-template-v2` until:
+Do not merge this project into `ai-video-template` until:
 
 1. Hosted/offline validation evidence is current.
 2. One Traditional Chinese single-speaker Gemini smoke test succeeds.

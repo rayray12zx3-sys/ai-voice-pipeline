@@ -15,3 +15,6 @@ class VoiceProvider(Protocol):
 
     @classmethod
     def generate(cls, request: VoiceRequest) -> bytes: ...
+
+    @classmethod
+    def list_voices(cls, **filters) -> tuple[dict, ...]: ...

@@ -53,7 +53,7 @@ Offline technical QC is already in R0. R2 adds semantic/creative checks.
 - [ ] Voice selection metadata/provenance
 - [ ] Consent and provenance policy before any voice replication work
 
-## R4 — ai-video-template-v2 integration
+## R4 — ai-video-template integration
 
 Do not start until R1 evidence exists.
 

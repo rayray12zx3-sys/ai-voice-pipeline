@@ -15,6 +15,8 @@
 - Python 3.11–3.14 CI workflow.
 - Windows validation and deliberate smoke-test helpers.
 - Public-repository security, provider-evidence and integration documentation.
+- Live Gemini Voice Library discovery with provider-side filters.
+- Voice Casting plans with fair A/B payloads, audition WAV generation, technical QC, receipts and AUDITION manifests.
 
 ### Changed
 

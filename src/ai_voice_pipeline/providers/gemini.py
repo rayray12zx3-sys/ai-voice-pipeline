@@ -13,6 +13,58 @@ from ..contracts import VoiceRequest
 class GeminiTTSProvider:
     provider_name = "GEMINI"
 
+    @classmethod
+    def list_voices(
+        cls,
+        *,
+        language_code: tuple[str, ...] = (),
+        gender: tuple[str, ...] = (),
+        pitch: tuple[str, ...] = (),
+        contexts: tuple[str, ...] = (),
+        type_: tuple[str, ...] = ("prebuilt",),
+        search: str | None = None,
+        page_size: int = 100,
+    ) -> tuple[dict, ...]:
+        """Return normalized Voice Library entries from the live Gemini project."""
+        try:
+            from google import genai
+        except ImportError as exc:
+            raise RuntimeError(
+                'Gemini execution requires: python -m pip install -e ".[gemini]"'
+            ) from exc
+
+        kwargs = {"page_size": page_size}
+        if language_code:
+            kwargs["language_code"] = list(language_code)
+        if gender:
+            kwargs["gender"] = list(gender)
+        if pitch:
+            kwargs["pitch"] = list(pitch)
+        if contexts:
+            kwargs["contexts"] = list(contexts)
+        if type_:
+            kwargs["type_"] = list(type_)
+        if search:
+            kwargs["search"] = search
+
+        response = genai.Client().voices.list(**kwargs)
+        normalized = []
+        for voice in getattr(response, "voices", None) or []:
+            normalized.append({
+                "id": getattr(voice, "id", None),
+                "display_name": getattr(voice, "display_name", None),
+                "language_code": getattr(voice, "language_code", None),
+                "region_code": getattr(voice, "region_code", None),
+                "accent": getattr(voice, "accent", None),
+                "gender": getattr(voice, "gender", None),
+                "pitch": getattr(voice, "pitch", None),
+                "persona": list(getattr(voice, "persona", None) or []),
+                "contexts": list(getattr(voice, "contexts", None) or []),
+                "type": getattr(voice, "type", None),
+                "description": getattr(voice, "description", None),
+            })
+        return tuple(normalized)
+
     @staticmethod
     def _turn_content(request: VoiceRequest) -> list[dict]:
         content: list[dict] = []

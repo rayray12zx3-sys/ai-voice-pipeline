@@ -16,6 +16,8 @@ This repository is intentionally separate from `ai-video-template`. R0 now provi
 - Gemini 3.8 Flash-Lite TTS
 - Single-speaker generation
 - Two-speaker conversational generation
+- Live Gemini Voice Library discovery (`client.voices.list()`)
+- Fair A/B Voice Casting with per-candidate WAV/QC/receipts
 - Provider-neutral request contract
 - JSON Schema for request configs
 - Dry-run payload generation by default
@@ -73,6 +75,29 @@ python -m pip install -e ".[gemini]"
 ```
 
 The Gemini optional dependency requires `google-genai>=2.25.0,<3`, matching the current SDK baseline needed by the Gemini 3.8 voice ecosystem.
+
+## Voice Casting
+
+Discover the live Gemini Voice Library instead of relying on a hard-coded AI Studio list:
+
+```powershell
+$env:GEMINI_API_KEY = "..."
+ai-voice voices --type prebuilt --page-size 500 --json
+```
+
+Then create a casting plan and dry-run it:
+
+```powershell
+ai-voice cast casting-mom.json
+```
+
+Generate audition WAVs only when ready:
+
+```powershell
+ai-voice cast casting-mom.json --execute --out-dir output/casting
+```
+
+Casting output is marked `AUDITION`, not production-approved. See [Voice Casting](docs/VOICE-CASTING.md).
 
 ## Dry-run first
 
